@@ -79,11 +79,22 @@ pipeline {
                 }
             }
         }
+
+        stage('Docker Build') {
+            steps {
+                dir('backend') {
+                    sh 'docker build -t petclinic-backend:latest .'
+                }
+                dir('frontend') {
+                    sh 'docker build -t petclinic-frontend:latest .'
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Pipeline complet reussi jusqu a Nexus !'
+            echo 'Pipeline complet reussi jusqu au Docker Build !'
         }
         failure {
             echo 'Le pipeline a echoue.'
