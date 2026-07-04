@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS_22'
+        nodejs 'NodeJS_24'
         maven 'Maven_3'
         jdk 'JDK_17'
     }
