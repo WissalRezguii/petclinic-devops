@@ -472,4 +472,10 @@
             </plugin>
         </plugins>
     </build>
+<distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <url>http://nexus:8081/repository/petclinic-releases/</url>
+        </repository>
+    </distributionManagement>
 </project>
