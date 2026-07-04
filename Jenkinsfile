@@ -69,11 +69,21 @@ pipeline {
                 }
             }
         }
+
+        stage('Upload to Nexus') {
+            steps {
+                dir('backend') {
+                    withMaven(globalMavenSettingsConfig: 'maven-settings-nexus') {
+                        sh 'mvn deploy -DskipTests'
+                    }
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Build, Tests et Analyse SonarQube reussis !'
+            echo 'Pipeline complet reussi jusqu a Nexus !'
         }
         failure {
             echo 'Le pipeline a echoue.'
