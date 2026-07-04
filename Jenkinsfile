@@ -51,14 +51,32 @@ pipeline {
                 }
             }
         }
+
+        stage('SonarQube Analysis') {
+            steps {
+                dir('backend') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo '✅ Build et Tests réussis !'
+            echo 'Build, Tests et Analyse SonarQube reussis !'
         }
         failure {
-            echo '❌ Le pipeline a échoué.'
+            echo 'Le pipeline a echoue.'
         }
     }
 }
