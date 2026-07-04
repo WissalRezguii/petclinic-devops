@@ -73,8 +73,8 @@ pipeline {
         stage('Upload to Nexus') {
             steps {
                 dir('backend') {
-                    withMaven(globalMavenSettingsConfig: 'bc716260-f2bc-45fb-809a-a9cbaee3cc4d') {
-                        sh 'mvn deploy -DskipTests'
+                    configFileProvider([configFile(fileId: 'bc716260-f2bc-45fb-809a-a9cbaee3cc4d', variable: 'MAVEN_SETTINGS')]) {
+                        sh 'mvn deploy -DskipTests -s $MAVEN_SETTINGS'
                     }
                 }
             }
