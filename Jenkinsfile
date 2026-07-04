@@ -47,7 +47,7 @@ pipeline {
         stage('Tests Frontend') {
             steps {
                 dir('frontend') {
-                    sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
+                    sh 'CHROME_BIN=/usr/bin/chromium npm run test -- --watch=false --browsers=ChromeHeadless'
                 }
             }
         }
