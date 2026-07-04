@@ -30,14 +30,35 @@ pipeline {
                 }
             }
         }
+
+        stage('Tests Backend') {
+            steps {
+                dir('backend') {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit 'backend/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Tests Frontend') {
+            steps {
+                dir('frontend') {
+                    sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo '✅ Build réussi !'
+            echo '✅ Build et Tests réussis !'
         }
         failure {
-            echo '❌ Le build a échoué.'
+            echo '❌ Le pipeline a échoué.'
         }
     }
 }
