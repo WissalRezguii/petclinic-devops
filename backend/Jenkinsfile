@@ -69,11 +69,18 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy') {
+            steps {
+                sh 'docker compose -f /home/wissal/projet-stage/petclinic/docker-compose.yml down || true'
+                sh 'docker compose -f /home/wissal/projet-stage/petclinic/docker-compose.yml up -d'
+            }
+        }
     }
 
     post {
         success {
-            echo 'Pipeline Backend reussi !'
+            echo 'Pipeline Backend reussi (avec Deploy) !'
         }
         failure {
             echo 'Le pipeline Backend a echoue.'
