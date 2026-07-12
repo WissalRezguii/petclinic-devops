@@ -1,0 +1,82 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven_3'
+        jdk 'JDK_17'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/WissalRezguii/petclinic-devops.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('backend') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                dir('backend') {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit 'backend/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                dir('backend') {
+                    withSonarQubeEnv('SonarQube') {
+                        sh 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage('Upload to Nexus') {
+            steps {
+                dir('backend') {
+                    configFileProvider([configFile(fileId: 'bc716260-f2bc-45fb-809a-a9cbaee3cc4d', variable: 'MAVEN_SETTINGS')]) {
+                        sh 'mvn deploy -DskipTests -s $MAVEN_SETTINGS'
+                    }
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('backend') {
+                    sh 'docker build -t petclinic-backend:latest .'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline Backend reussi !'
+        }
+        failure {
+            echo 'Le pipeline Backend a echoue.'
+        }
+    }
+}

@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    tools {
+        nodejs 'NodeJS_24'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/WissalRezguii/petclinic-devops.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                    sh 'npm run build -- --configuration production'
+                }
+            }
+        }
+
+        stage('Tests') {
+            steps {
+                dir('frontend') {
+                    sh 'CHROME_BIN=/usr/bin/chromium npm run test -- --watch=false --browsers=ChromeHeadlessCI'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('frontend') {
+                    sh 'docker build -t petclinic-frontend:latest .'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline Frontend reussi !'
+        }
+        failure {
+            echo 'Le pipeline Frontend a echoue.'
+        }
+    }
+}
