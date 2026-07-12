@@ -44,7 +44,25 @@ services:
       retries: 10
     networks:
       - devops-network
+  prometheus:
+    image: prom/prometheus
+    container_name: petclinic-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - devops-network
 
+  grafana:
+    image: grafana/grafana
+    container_name: petclinic-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      - devops-network
 volumes:
   db-data:
 
