@@ -50,7 +50,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - /var/lib/docker/volumes/jenkins_home/_data/workspace/petclinic-backend-pipeline/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     networks:
       - devops-network
 
