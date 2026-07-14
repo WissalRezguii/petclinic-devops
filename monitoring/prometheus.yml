@@ -3,6 +3,6 @@ global:
 
 scrape_configs:
   - job_name: 'petclinic-backend'
-    metrics_path: '/actuator/prometheus'
+    metrics_path: '/petclinic/actuator/prometheus'
     static_configs:
       - targets: ['backend:9966']
